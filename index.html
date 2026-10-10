@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101020">
+<title>My AI Video Studio</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #101020;
+  --panel: #1b1b30;
+  --text: #f5f5ff;
+  --muted: #a8a8c4;
+  --accent: #a78bfa;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, Arial, sans-serif;
+}
+header {
+  padding: 22px 17px;
+  background: linear-gradient(135deg,#31205e,#15152b);
+  border-bottom: 1px solid #393454;
+}
+header h1 { font-size: 24px; margin: 0 0 7px; }
+header p { color: #d2c8f8; margin: 0; font-size: 14px; }
+main {
+  width: min(100% - 28px, 680px);
+  margin: 20px auto;
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid #34344f;
+  border-radius: 16px;
+  padding: 17px;
+  margin-bottom: 16px;
+}
+h2 { font-size: 17px; margin: 0 0 14px; }
+label {
+  display: block;
+  font-size: 14px;
+  margin: 13px 0 7px;
+  color: #e2dff7;
+}
+textarea, select {
+  width: 100%;
+  border: 1px solid #454563;
+  border-radius: 10px;
+  background: #121225;
+  color: white;
+  padding: 12px;
+  font: inherit;
+}
+textarea { min-height: 145px; resize: vertical; }
+select { min-height: 45px; }
+button, .link-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 15px;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  text-decoration: none;
+}
+.primary {
+  background: var(--accent);
+  color: #171126;
+}
+.secondary {
+  background: #30304a;
+  color: white;
+  border: 1px solid #4b4b69;
+}
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: 14px;
+}
+.actions button { width: 100%; }
+.full { width: 100%; margin-top: 10px; }
+.note {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+#status {
+  min-height: 22px;
+  color: #c4b5fd;
+  font-size: 13px;
+  margin-top: 12px;
+}
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 15px;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎬 My AI Video Studio</h1>
+  <p>Your personal AI video prompt workspace</p>
+</header>
+
+<main>
+  <section class="panel">
+    <h2>✨ Create a video prompt</h2>
+
+    <label for="prompt">Describe your video</label>
+    <textarea id="prompt"
+      placeholder="Example: A realistic golden retriever running through a green meadow at sunrise, cinematic camera movement, natural lighting..."></textarea>
+
+    <label for="duration">Video duration</label>
+    <select id="duration">
+      <option value="5">5 seconds</option>
+      <option value="10" selected>10 seconds</option>
+      <option value="15">15 seconds</option>
+      <option value="20">20 seconds</option>
+      <option value="30">30 seconds</option>
+    </select>
+
+    <label for="ratio">Aspect ratio</label>
+    <select id="ratio">
+      <option value="9:16">9:16 — Reels / Shorts</option>
+      <option value="16:9">16:9 — YouTube</option>
+      <option value="1:1">1:1 — Square</option>
+    </select>
+
+    <label for="style">Visual style</label>
+    <select id="style">
+      <option value="Photorealistic, cinematic">Photorealistic</option>
+      <option value="Hand-painted 2D animation">2D animation</option>
+      <option value="Cinematic nature documentary">Nature documentary</option>
+      <option value="Cozy, dreamy atmosphere">Cozy and dreamy</option>
+      <option value="Cinematic food photography">Food video</option>
+    </select>
+
+    <div class="actions">
+      <button class="primary" id="build">Build prompt</button>
+      <button class="secondary" id="copy">Copy prompt</button>
+    </div>
+    <button class="secondary full" id="save">Save prompt on this device</button>
+    <div id="status" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="panel">
+    <h2>📝 Ready-to-use prompt</h2>
+    <textarea id="result" placeholder="Your completed prompt will appear here..." readonly></textarea>
+    <button class="primary full" id="copyResult">Copy completed prompt</button>
+  </section>
+
+  <section class="panel">
+    <h2>🌐 Find a video generator</h2>
+    <p class="note">
+      Open a video-generation demo and check whether it offers
+      free generation. Availability and duration limits vary.
+      This app does not generate video by itself yet.
+    </p>
+    <a class="link-button primary full"
+      href="https://huggingface.co/spaces"
+      target="_blank" rel="noopener noreferrer">
+      Explore Hugging Face Spaces
+    </a>
+    <a class="link-button secondary full"
+      href="https://www.google.com/search?q=free+AI+text+to+video+demo"
+      target="_blank" rel="noopener noreferrer">
+      Find free video demos
+    </a>
+  </section>
+
+  <section class="panel">
+    <h2>💾 Saved prompts</h2>
+    <div id="saved" class="note">No prompts saved yet.</div>
+    <button class="secondary full" id="clear">Clear saved prompts</button>
+  </section>
+</main>
+
+<footer>My AI Video Studio · Personal workspace · v1.0</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function buildPrompt() {
+  const description = $("prompt").value.trim();
+  if (!description) {
+    $("status").textContent = "Please describe your video first.";
+    return "";
+  }
+
+  return [
+    "Create a video exactly " + $("duration").value + " seconds long.",
+    "Aspect ratio: " + $("ratio").value + ".",
+    "Visual style: " + $("style").value + ".",
+    "Scene description: " + description,
+    "Use coherent motion, clear composition and consistent visual details.",
+    "Avoid unwanted text overlays, logos and watermarks."
+  ].join("\n\n");
+}
+
+$("build").addEventListener("click", () => {
+  const result = buildPrompt();
+  if (result) {
+    $("result").value = result;
+    $("status").textContent = "Prompt created successfully.";
+  }
+});
+
+async function copyText(text) {
+  if (!text.trim()) {
+    $("status").textContent = "Build a prompt first.";
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(text);
+    $("status").textContent = "Copied to clipboard!";
+  } catch {
+    const box = document.createElement("textarea");
+    box.value = text;
+    document.body.appendChild(box);
+    box.select();
+    const ok = document.execCommand("copy");
+    box.remove();
+    $("status").textContent = ok
+      ? "Copied to clipboard!"
+      : "Please select and copy the text manually.";
+  }
+}
+
+$("copy").addEventListener("click", () =>
+  copyText($("result").value || buildPrompt())
+);
+$("copyResult").addEventListener("click", () =>
+  copyText($("result").value)
+);
+
+function readSaved() {
+  try {
+    return JSON.parse(localStorage.getItem("myVideoPrompts") || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function renderSaved() {
+  const list = readSaved();
+  const area = $("saved");
+  area.replaceChildren();
+
+  if (!list.length) {
+    area.textContent = "No prompts saved yet.";
+    return;
+  }
+
+  list.forEach((item, index) => {
+    const wrap = document.createElement("div");
+    wrap.style.cssText =
+      "padding:12px 0;border-bottom:1px solid #454563";
+
+    const title = document.createElement("p");
+    title.textContent = item.slice(0, 100);
+    title.style.whiteSpace = "pre-wrap";
+
+    const load = document.createElement("button");
+    load.className = "secondary";
+    load.textContent = "Load prompt";
+    load.addEventListener("click", () => {
+      $("result").value = item;
+      $("status").textContent = "Saved prompt loaded.";
+    });
+
+    wrap.append(title, load);
+    area.appendChild(wrap);
+  });
+}
+
+$("save").addEventListener("click", () => {
+  const text = $("result").value || buildPrompt();
+  if (!text) return;
+
+  try {
+    const list = readSaved();
+    list.unshift(text);
+    localStorage.setItem(
+      "myVideoPrompts", JSON.stringify(list.slice(0, 20))
+    );
+    renderSaved();
+    $("status").textContent = "Prompt saved on this device.";
+  } catch {
+    $("status").textContent =
+      "Saving failed. Check browser storage settings.";
+  }
+});
+
+$("clear").addEventListener("click", () => {
+  if (confirm("Delete all saved prompts on this device?")) {
+    localStorage.removeItem("myVideoPrompts");
+    renderSaved();
+    $("status").textContent = "Saved prompts cleared.";
+  }
+});
+
+renderSaved();
+</script>
+</body>
+</html>
